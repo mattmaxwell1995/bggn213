@@ -1,0 +1,127 @@
+---
+title: "class11 Structural Bioinformatics"
+output: github_document
+---
+
+## The PDB database
+
+Let's examine the PDB structure database composition
+Loaded PDB data summary using more show folder in new window and dragged into workspace.
+```{r}
+#Loading PDB summary into workspace and making it look nice. (Making first column row names)
+stats <- read.csv("PDB Data Export Summary (1).csv", row.names = 1)
+stats
+```
+
+Q. What percentage of strucutres solved by Cryo-EM
+
+```{r}
+pre.by.method <- stats$Total/sum(stats$Total) * 100
+names(pre.by.method) <- row.names(stats)
+pre.by.method
+```
+
+Q. What proportion of PDB structures are protein
+
+```{r}
+protein_percentage_pdb <- round(sum(stats$Proteins)/sum(stats$Total) *100, 1)
+protein_percentage_pdb
+```
+
+How to get data without CSV file? Copy data and use Addins --> Paste as dataframe function from datapasta.
+
+```{r}
+data.frame(stringsAsFactors=FALSE,
+   Experimental.Method = c("X-Ray", "Other", "NMR", "Multi Method",
+                           "Electron Microscopy", "Total"),
+              Proteins = c(124770, 250, 10988, 127, 2057, 138192),
+         Nucleic.Acids = c(1993, 4, 1273, 5, 31, 3306),
+    Protein.RNA.Complex = c(6451, 6, 257, 2, 723, 7439),
+                 Other = c(10, 13, 8, 1, 0, 32),
+                 Total = c(133224, 273, 12526, 135, 2811, 148969)
+)
+
+```
+
+##Section 3 Bio3D
+
+```{r}
+#check if package is loaded by looking through packages tab.
+library(bio3d)
+
+```
+
+Load HIV protease + inhibitor pdb file
+```{r}
+pdb <- read.pdb("1hsg")
+pdb
+```
+
+Load bio3D-view package & view pdb file in R studio
+```{r}
+library("bio3d.view")
+
+view(pdb, "overview", col = "sse")
+```
+
+Extract only protein only portion of this structure and write it out to a new pdb file.
+
+Extract Ligand (i.e. HIV protease inhibitor)
+```{r}
+Inds <- atom.select(pdb, "ligand")
+Inds
+#Ligand.only <- trim.pdb(protein.atoms)
+#write.pdb(protein.only)
+```
+
+```{r}
+#Inds$atom
+pdb$atom[Inds$atom, ]
+```
+
+
+```{r}
+ligand.pdb <- trim.pdb(pdb, Inds)
+ligand.pdb
+```
+
+```{r}
+view(ligand.pdb)
+```
+
+```{r}
+write.pdb(ligand.pdb, file = "ligand.pdb")
+```
+
+
+Lets make a protein only file now. function is 
+read.pdb("1HSG")
+Inds <- atom.select(pdb, "protein")
+protein.pdb <- trim.pdb(PDB, Inds)
+write.pdb(protein.pdb, file = "protein.pdb")
+
+
+```{r}
+Inds.protein <- atom.select(pdb, "protein")
+Inds.protein
+```
+
+```{r}
+protein.pdb <- trim.pdb(pdb, Inds.protein)
+protein.pdb
+```
+
+```{r}
+write.pdb(protein.pdb, file = "protein.pdb")
+```
+
+
+```{r}
+pdb <- read.pdb("1HEL")
+pdb
+
+#Normal Mode Analysis
+modes <- nma(pdb)
+plot(modes)
+```
+
