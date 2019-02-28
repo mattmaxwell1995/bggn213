@@ -1,0 +1,283 @@
+---
+title: "Class 14 Transcriptomics and Analysis of RNA-seq Data"
+output: github_document
+---
+
+Study profiling ASM cell lines treated with dexamethasone focused in on gene CRISPLD2
+
+#RNA seq Analysis
+#Import countData and colData
+
+```{r}
+counts <- read.csv("Data/airway_scaledcounts.csv", stringsAsFactors = FALSE)
+metadata <-  read.csv("Data/airway_metadata.csv", stringsAsFactors = FALSE)
+
+```
+
+Check the data
+```{r}
+head(counts)
+```
+
+```{r}
+head(metadata)
+```
+
+```{r}
+View(metadata)
+
+```
+
+```{r}
+nrow(counts)
+ncol(counts)
+
+```
+
+Check for metadata to counts correspondence
+```{r}
+all( metadata$id == colnames(counts)[-1] )
+```
+Our header ensgene is being counted as a column. use [-1] following colnames(counts) to match up our columns.
+
+
+#Control counts
+#this labels control samples counts with Ensemble gene identifiers
+```{r}
+control.ids <- metadata$id[metadata[,"dex"]=="control"]
+control <- counts[,control.ids]
+rownames(control) <- counts$ensgene
+head(control)
+```
+
+#Treated counts
+```{r}
+treated.ids <- metadata$id[metadata[,"dex"] =="treated"]
+treated <- counts[,treated.ids]
+rownames(treated) <- counts$ensgene
+head(treated)
+
+
+```
+Lets get the means for control and treated groups for all our genes.
+```{r}
+control.mean <- rowMeans(control)
+head(control.mean)
+```
+
+
+```{r}
+treated.mean <- rowMeans(treated)
+head(treated.mean)
+```
+
+
+Get mean count value for each gene for both groups. Use data.frame() functuion for making this pretty
+
+```{r}
+meancounts <- data.frame(control.mean, treated.mean)
+head(meancounts)
+```
+
+
+```{r}
+colSums(meancounts)
+```
+
+```{r}
+plot(meancounts, col=c("red"))
+```
+
+#Use log scale for x & y axis!
+```{r}
+plot(meancounts, col=c("red", "blue"), log="xy")
+```
+#Create a Log2FC column in meancounts to examine fold change of treated samples relative to control.
+
+```{r}
+meancounts$log2fc <- log2(meancounts$treated.mean/meancounts$control.mean)
+head(meancounts)
+
+```
+
+
+
+
+The negative value means they are below the 45˚ line if we look at the graph. It means when the cell is treated, the gene has a lower value than in control. -Inf means it's trying to log O. We want to filter all the 0 values.
+
+Also, let's call our corrected meancounts "mycounts"
+```{r}
+zero.vals <- which(meancounts[,1:2]==0, arr.ind=TRUE)
+
+to.rm <- unique(zero.vals[,1])
+mycounts <- meancounts[-to.rm,]
+head(mycounts)
+```
+arr.ind returns results as an array
+```{r}
+toy <- c(1,2,0,4,0)
+which(toy==0)
+
+newtoy <- cbind(toy,toy)
+which(newtoy==0, arr.ind = TRUE)
+
+unique( which(newtoy==0, arr.ind = TRUE)[,1])
+```
+
+#mycounts has corrected Logfold change column.
+Now that we have cleaned up the data let's set up some threshold to help us furthur characterize the darta. It's common to set the threshold of greater than 2 or less than -2.
+```{r}
+up.ind <- mycounts$log2fc > 2
+down.ind <- mycounts$log2fc < (-2)
+```
+
+250 upregulated genes.
+```{r}
+sum(up.ind)
+```
+367 downregulated genes
+```{r}
+sum(down.ind)
+```
+
+##Let's add anotation data from Ensemble
+
+```{r}
+anno <- read.csv("Data/annotables_grch38.csv")
+head(anno)
+```
+
+```{r}
+dim(anno)
+```
+
+##Let's try-out the **merge()** function to add the annotation data to our **mycounts** (i.e., gene names to the ensemble identifiers)
+```{r}
+head(mycounts)
+```
+
+```{r}
+mycounts.anno <- merge(x=mycounts, y=anno, by.x="row.names", by.y="ensgene")
+head(mycounts.anno)
+```
+
+```{r}
+source("http://bioconductor.org/biocLite.R")
+biocLite("AnnotationDbi")
+```
+
+```{r}
+source("http://bioconductor.org/biocLite.R")
+biocLite("org.Hs.eg.db")
+library(org.Hs.eg.db)
+```
+
+```{r}
+columns(org.Hs.eg.db)
+
+```
+
+#Add columns for gene symbol, entrez id, and uniprot ID.
+```{r}
+mycounts$symbol <- mapIds(org.Hs.eg.db,
+                     keys=row.names(mycounts),
+                     column="SYMBOL",
+                     keytype="ENSEMBL",
+                     multiVals="first")
+```
+```{r}
+mycounts$entrez <- mapIds(org.Hs.eg.db,
+                     keys=row.names(mycounts),
+                     column="ENTREZID",
+                     keytype="ENSEMBL",
+                     multiVals="first")
+
+```
+
+```{r}
+mycounts$uniprot <- mapIds(org.Hs.eg.db,
+                                    keys=row.names(mycounts),
+                                    column="UNIPROT",
+                                    keytype="ENSEMBL",
+                                    multiVals="first")
+```
+
+```{r}
+head(mycounts)
+```
+
+##DESeq2 Analysi
+```{r}
+library(DESeq2)
+```
+DESeq2 uses a special object called DESeqDataSet which is composed from the count data, the metadata and the experimental design. It will also store the data in the object.
+
+```{r}
+dds <- DESeqDataSetFromMatrix(countData = counts,
+                              colData = metadata,
+                              design= ~dex,
+                              tidy= T)
+```
+
+```{r}
+dds
+```
+
+Run DESeq Analysis
+```{r}
+dds <- DESeq(dds)
+```
+
+
+Get results from DESeq Analysi
+
+```{r}
+res <- results(dds)
+res
+```
+
+
+```{r}
+summary(res)
+```
+Let's change the p value from .1 to 0.05, more stringent cutoff.
+```{r}
+summary(res, alpha=0.05)
+```
+
+##Volcano plots
+```{r}
+plot(res$log2FoldChange, -log(res$padj))
+```
+
+Let's colorize the graph
+
+#ran into trouble following entrez additon to mycounts. 
+```{r}
+mycols <- rep("grey", nrow(res))
+mycols[abs(res$log2FoldChange) > 2] = "red"
+subsuet.inds <- res$padj<0.01 & abs(res$log2FoldChange)>2
+
+mycols[subsuet.inds] = "blue"
+plot(res$log2FoldChange, -log(res$padj), col=mycols)
+```
+
+Let's do this in ggplot too, make some pretty graphs in ggplot.
+
+```{r}
+library(ggplot2)
+ggplot(as.data.frame(res), aes(log2FoldChange, -log10(pvalue), col=mycols)) + 
+    geom_point() + 
+    ggtitle("Volcano plot")
+```
+
+Weird. Bioconductor package not available for the latest version of R.
+```{r}
+biocLite("EnhancedVolcano")
+
+```
+```{r}
+library(EnhancedVolcano)
+```
+
+##Let's see about some box plots for CRISPLD2
