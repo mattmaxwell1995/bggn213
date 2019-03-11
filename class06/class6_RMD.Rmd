@@ -1,0 +1,181 @@
+---
+title: "Class6 R Functions"
+author: "Matt Maxwell"
+date: "January 25, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+Insert R code and run with green arrow in created section of R code
+```{r}
+file1 <-"https://bioboot.github.io/bggn213_S18/class-material/test1.txt"
+data1 <- read.table(file1, header = T, sep = ",")
+data1
+```
+
+```{r}
+file2 <- "https://bioboot.github.io/bggn213_S18/class-material/test2.txt"
+data2 <- read.table(file2, header = T, sep = "\t")
+data2
+```
+
+## R Functions
+My first function 
+
+```{r}
+add <- function(x, y=1) {
+ # Sum the input x and y
+ x + y
+}
+```
+Hit green arrow on function to create function before using it
+
+Lets use the **add()** function
+
+```{r}
+add(x=1, y=4)
+add(1, 4)
+add(1)
+```
+
+Lets make a function to save us time for a task
+
+```{r}
+rescale <- function (x) {
+  rng <- range(x)
+(x - rng[1]) / (rng[2] - rng[1])
+}
+```
+```{r}
+rescale(1:10)
+```
+
+How would you get your function to work here.
+```{r}
+rescale( c(1,2,NA,3,10))
+```
+
+```{r}
+rescale2 <- function (x) {
+  rng <- range(x, na.rm = TRUE)
+(x - rng[1]) / (rng[2] - rng[1])
+}
+```
+
+
+```{r}
+#rescale2( c(1,2,NA,3,10) )
+```
+
+
+
+
+
+```{r}
+rescale3 <- function(x, na.rm=TRUE, plot=TRUE) {
+ if(na.rm) {
+ rng <-range(x, na.rm=na.rm)
+ } else {
+ rng <-range(x)
+ }
+ print("Hello")
+ answer <- (x - rng[1]) / (rng[2] - rng[1])
+ print("is it me you are looking for?")
+ if(plot) {
+ plot(answer, typ="b", lwd=4)
+   print("please don't ever sing again")
+ }
+ print("I can see it in ...")
+}
+```
+
+
+```{r}
+rescale3(1:10, plot = TRUE)
+```
+
+
+
+```{r}
+library("bio3d")
+```
+
+
+```{r}
+pdb <- read.pdb("1hbs")
+```
+```{r}
+pdb
+```
+
+
+
+```{r}
+# Can you improve this analysis code?
+library(bio3d)
+s1 <- read.pdb("4AKE") # kinase with drug
+s2 <- read.pdb("1AKE") # kinase no drug
+s3 <- read.pdb("1E4Y") # kinase with drug
+s1.chainA <- trim.pdb(s1, chain="A", elety="CA")
+s2.chainA <- trim.pdb(s2, chain="A", elety="CA")
+s3.chainA <- trim.pdb(s3, chain="A", elety="CA")
+
+s1.b <- s1.chainA$atom$b
+s2.b <- s2.chainA$atom$b
+s3.b <- s3.chainA$atom$b
+
+plotb3(s1.b, sse=s1.chainA, typ="l", ylab="Bfactor")
+plotb3(s2.b, sse=s2.chainA, typ="l", ylab="Bfactor")
+plotb3(s3.b, sse=s3.chainA, typ="l", ylab="Bfactor")
+
+```
+```{r}
+s1
+```
+```{r}
+trim.pdb("")
+```
+
+
+
+```{r}
+hc <- hclust( dist( rbind(s1.b, s2.b, s3.b) ) )
+```
+
+```{r}
+plot(hc)
+```
+
+
+optimize the code above by making a function, want it to work on large list of proteins. think specific optimization is needed in the read.pdb first section.
+
+read_structures <- structure()
+
+
+
+
+
+
+
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
