@@ -1,0 +1,172 @@
+---
+title: "Class 9 PCA and Clustering Project"
+author: "Matt Maxwell"
+date: "February 8, 2019"
+output: html_document
+---
+
+## Machine Learning Cancer Biopsy Analysis
+
+Put dataset file in my class09 directory then clicked file and selected "import dataset". This gave me a nice formatted dataset.
+
+
+Could also use read.csv to read data set. Need to learn to do this!
+```{r}
+fna.data <- "WisconsinCancer (2).csv"
+read.csv(fna.data)
+wisc.df <- read.csv(fna.data)
+```
+
+
+
+Always double check your data after loading.
+```{r}
+head(wisc.df)
+```
+
+
+Looks like there is a funny last col "X". Lets check how many samples (i.e patients) .
+
+```{r}
+# number of patients
+nrow(wisc.df)
+```
+
+
+```{r}
+ncol(wisc.df)
+```
+
+Let's take rows 3 to 32 for further analysis 
+```{r}
+wisc.data <- wisc.df[ ,3:32]
+head(wisc.data)
+View(wisc.data)
+```
+
+Set row names to patient ID number.
+```{r}
+row.names(wisc.data) <- wisc.df$id
+head(wisc.data)
+```
+
+Q. How many cancer/non-cancer samples?
+```{r}
+table(wisc.df$diagnosis)
+```
+
+
+Q. How many features/columns are "_mean" values?
+```{r}
+#colnames(wisc.data)
+inds <- grep("_mean", colnames(wisc.data))
+colnames(wisc.data)[inds]
+```
+
+
+
+Create a diagnosis vector.
+```{r}
+diagnosis <- as.numeric(wisc.data)
+```
+
+
+
+Calculate mean of every column. apply(x, margin, function). 
+round(x, significant figures)
+```{r}
+round( apply(wisc.data, 2, mean), 2)
+```
+
+calculate stdv of every column.
+```{r}
+round( apply(wisc.data, 2, sd), 2)
+```
+
+
+
+## Principal Component Analysis
+prcomp() is our function for principal component analysis.
+prcomp(wisc.data, scale = TRUE)
+
+```{r}
+#Perform PCA on wisc.data
+wisc.pr <- prcomp(wisc.data, scale = TRUE)
+summary(wisc.pr)
+```
+
+Plot PCA analysis
+```{r}
+plot(wisc.pr$x[, 1], wisc.pr$x[, 2], col = wisc.df$diagnosis, xlab = "wisc.pr$x[, 1]", ylab = "wisc.pr$x[, 2]")
+```
+
+Calculate variance of each component. Shows us why we chose our PC1 & PC2.
+
+```{r}
+pr.var <- wisc.pr$sdev^2
+pve <- round( pr.var/sum(pr.var) * 100, 2)
+```
+
+```{r}
+plot(pve, xlab = "Principal Component", ylab = "Proportion of Variance Explained",ylim = c(0, 1), type ="o")
+```
+
+Bar plot of PC.
+```{r}
+# Alternative scree plot of the same data, note data driven y-axis
+barplot(pve, ylab = "Precent of Variance Explained",
+     names.arg=paste("PC",1:length(pve)), las=2, axes = FALSE)
+axis(2, at=pve, labels=round(pve,2)*100 )
+```
+
+
+
+##Hierarchical clustering
+
+For hclust we need a distance matrix and we get this from our PCA results (i.e. wisc.pr$x)
+
+```{r}
+d <- dist(wisc.pr$x[, 1:2])
+hc <- hclust(d, method = "ward.D2")
+plot(hc)
+
+```
+
+Let's cut tree into 3 groups
+```{r}
+grp3 <- cutree(hc, k=3)
+table(grp3)
+plot(grp3)
+```
+
+Plot our PCA plot colored by cluster
+
+```{r}
+plot(wisc.pr$x[,1], wisc.pr$x[,2], xlab = "PC1", ylab = "PC2", col = grp3)
+```
+
+
+cross tabulation?
+
+```{r}
+
+#diagnosis 
+diagnosis <- wisc.df$diagnosis == "M"
+
+table(grp3, diagnosis)
+
+```
+
+Let's predict cancer status of new data
+```{r}
+url <- "https://tinyurl.com/new-samples-CSV"
+new <- read.csv(url)
+npc <- predict(wisc.pr, newdata=new)
+npc
+```
+
+```{r}
+plot(wisc.pr$x[,1:2], col=grp3)
+points(npc[,1], npc[,2], col= c("green", "blue"), pch=15, cex=3)
+```
+
