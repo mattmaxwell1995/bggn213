@@ -1,0 +1,167 @@
+---
+title: "Class 08 Machine Learning Intro"
+author: "Matt Maxwell"
+date: "February 6, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+##Clustering
+kmeans first play
+```{r}
+tmp <- c(rnorm(30,-3), rnorm(30,3))
+
+x <- cbind(x=tmp, y=rev(tmp))
+plot(x)
+
+```
+
+
+
+```{r}
+# k-means algorithm to analyze x (data set) with 3 centers, run 20 times (nstart)km <- kmeans(x, centers= 2, nstart= 20)
+kmeans(x, centers= 2, nstart= 20)
+km
+
+```
+
+size of clusters -- accessing list with dolla sign
+```{r}
+km$size
+
+```
+
+```{r}
+km$cluster
+```
+
+```{r}
+plot(x, col=km$cluster)
+points(km$centers, col="blue", pch=15, cex=1)
+```
+
+
+
+#Hierachical clustering
+
+
+```{r}
+# as the Euclidean distance between observations
+dist_matrix <- dist(x)
+# The hclust() function returns a hierarchical
+# clustering model
+hc <- hclust(d = dist_matrix)
+# the print method is not so useful here
+hc
+
+```
+
+```{r}
+plot(hc)
+abline(h=6, col="red")
+grp2 <- cutree(hc, h=6)
+```
+
+```{r}
+plot(x, col=grp2)
+
+
+```
+
+Cut into K groups, k equals number
+```{r}
+cutree(hc, k=2)
+plot(hc)
+abline(h=6, col="red")
+```
+
+```{r}
+# Using different hierarchical clustering methods
+d <- dist_matrix
+
+hc.complete <- hclust(d, method="complete")
+plot(hc.complete)
+hc.average <- hclust(d, method="average")
+plot(hc.average)
+hc.single <- hclust(d, method="single")
+plot(hc.single)
+```
+
+
+Made up overlapping data - abit more real life like :)
+```{r}
+# Step 1. Generate some example data for clustering
+x <- rbind(
+ matrix(rnorm(100, mean=0, sd = 0.3), ncol = 2), # c1
+ matrix(rnorm(100, mean = 1, sd = 0.3), ncol = 2), # c2
+ matrix(c(rnorm(50, mean = 1, sd = 0.3), # c3
+ rnorm(50, mean = 0, sd = 0.3)), ncol = 2))
+colnames(x) <- c("x", "y")
+# Step 2. Plot the data without clustering
+plot(x)
+# Step 3. Generate colors for known clusters
+# (just so we can compare to hclust results)
+col <- as.factor( rep(c("c1","c2","c3"), each=50) )
+plot(x, col=col)
+```
+
+
+Q. Use the dist(), hclust(), plot() and cutree()
+ functions to return 2 and 3 clusters
+Q. How does this compare to your known 'col' groups?
+```{r}
+##read this hiearchal function from inside out (dist, hclust, etc)
+hc <- hclust(dist(x))
+plot(hc)
+```
+
+```{r}
+grps <- cutree(hc, k=3)
+plot(x, col=grps)
+```
+
+
+Principal component analysis is a reduction technique to determine similarities and group items.
+
+Let's load some data for PCA
+```{r}
+mydata <- read.csv("https://tinyurl.com/expression-CSV",
+ row.names=1)
+head(mydata) 
+```
+
+
+
+
+#How to do PCA in R
+
+```{r}
+
+##lets do PCA with prcomp
+pca <- prcomp(t(mydata), scale = TRUE)
+summary(pca)
+plot(pca)
+attributes(pca)
+```
+
+
+```{r}
+pca <- prcomp(t(mydata), scale = TRUE)
+## basic PC1 vs PC2 2D plot
+plot(pca$x[,1], pca$x[,2], xlab= "PC1", ylab = "PC2")
+## variance captured per PC
+pca.var <- pca$sdev^2
+pca.var.per <-round(pca.var/sum(pca.var)*100, 1)
+```
+
+
+#PCA for Ireland food consumption
+```{r}
+#read data
+ukfoods <- read.csv("data/UK_foods.csv")
+```
+
