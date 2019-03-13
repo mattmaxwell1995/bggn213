@@ -2,7 +2,7 @@
 title: "Class 7 Functions and packages"
 author: "Matt Maxwell"
 date: "January 30, 2019"
-output: html_document
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
@@ -17,15 +17,6 @@ Load(i.e. **source**) our rescale() function from last class.
 source("http://tinyurl.com/rescale-R")
 ```
 
-
-
-```{r}
-rescale(1:5)
-```
-
-```{r}
-rescale( c(1:5, "string"))
-```
 
 we want to make this function more robust to these types of errors
 

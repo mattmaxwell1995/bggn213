@@ -2,7 +2,7 @@
 title: "Class6 R Functions"
 author: "Matt Maxwell"
 date: "January 25, 2019"
-output: html_document
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
@@ -135,9 +135,6 @@ plotb3(s3.b, sse=s3.chainA, typ="l", ylab="Bfactor")
 ```
 ```{r}
 s1
-```
-```{r}
-trim.pdb("")
 ```
 
 
