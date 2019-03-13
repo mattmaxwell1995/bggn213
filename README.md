@@ -14,5 +14,5 @@ This is a collection of my work from [BGGN213 at UCSD](https://mattmaxwell1995.g
  - Class14 [RNA Seq Analysis]()
  - Class15 [Interpretation of Gene Lists]()
  - Class16 [Biological Network Analysis]()
- - Class18 [Cancer Genomics]()
+ - Class18 [Cancer Genomics](https://github.com/mattmaxwell1995/bggn213/blob/master/class18/class18.md)
  
