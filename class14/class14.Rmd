@@ -276,7 +276,3 @@ Weird. Bioconductor package not available for the latest version of R.
 biocLite("EnhancedVolcano")
 
 ```
-```{r}
-library(EnhancedVolcano)
-```
-
