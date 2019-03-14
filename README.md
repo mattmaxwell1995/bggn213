@@ -3,7 +3,7 @@
 This is a collection of my work from [BGGN213 at UCSD](https://mattmaxwell1995.github.io/bggn213/)
 
 ## Contents
- - Class05 [Data Visualization and graphics with R](https://github.com/mattmaxwell1995/bggn213/blob/master/class05/class05.R)
+ - Class05 [Data Visualization and graphics with R](https://github.com/mattmaxwell1995/bggn213/blob/master/class05/test.md)
  - Class06 [R Functions](https://github.com/mattmaxwell1995/bggn213/blob/master/class06/class6_RMD.md)
  - Class07 [R Packages CRAN & Bioconductor](https://github.com/mattmaxwell1995/bggn213/blob/master/class07/class07.md)
  - Class08 [Machine Learning Pt. I](https://github.com/mattmaxwell1995/bggn213/blob/master/class08/class08.md)
