@@ -362,14 +362,14 @@ biocLite("AnnotationDbi")
     ## package 'AnnotationDbi' successfully unpacked and MD5 sums checked
     ## 
     ## The downloaded binary packages are in
-    ##  C:\Users\mattm\AppData\Local\Temp\RtmpiCLpqn\downloaded_packages
+    ##  C:\Users\mattm\AppData\Local\Temp\Rtmpyakekw\downloaded_packages
 
     ## installation path not writeable, unable to update packages: class,
     ##   codetools, Matrix, mgcv
 
     ## Old packages: 'caTools', 'formatR', 'glue', 'knitr', 'openssl',
-    ##   'processx', 'RcppArmadillo', 'RCurl', 'rgl', 'stringi', 'sys',
-    ##   'tinytex', 'XML'
+    ##   'processx', 'RcppArmadillo', 'RCurl', 'rgl', 'rmarkdown', 'stringi',
+    ##   'sys', 'tinytex', 'XML'
 
 ``` r
 source("http://bioconductor.org/biocLite.R")
@@ -396,8 +396,8 @@ biocLite("org.Hs.eg.db")
     ##   codetools, Matrix, mgcv
 
     ## Old packages: 'caTools', 'formatR', 'glue', 'knitr', 'openssl',
-    ##   'processx', 'RcppArmadillo', 'RCurl', 'rgl', 'stringi', 'sys',
-    ##   'tinytex', 'XML'
+    ##   'processx', 'RcppArmadillo', 'RCurl', 'rgl', 'rmarkdown', 'stringi',
+    ##   'sys', 'tinytex', 'XML'
 
 ``` r
 library(org.Hs.eg.db)
@@ -735,5 +735,5 @@ biocLite("EnhancedVolcano")
     ##   codetools, Matrix, mgcv
 
     ## Old packages: 'caTools', 'formatR', 'glue', 'knitr', 'openssl',
-    ##   'processx', 'RcppArmadillo', 'RCurl', 'rgl', 'stringi', 'sys',
-    ##   'tinytex', 'XML'
+    ##   'processx', 'RcppArmadillo', 'RCurl', 'rgl', 'rmarkdown', 'stringi',
+    ##   'sys', 'tinytex', 'XML'
