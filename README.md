@@ -8,7 +8,7 @@ This is a collection of my work from [BGGN213 at UCSD](https://mattmaxwell1995.g
  - Class07 [R Packages CRAN & Bioconductor]()
  - Class08 [Machine Learning Pt. I]()
  - Class09 [PCA Analysis]()
- - Class11 [Structural Bioinformatics pt. I]()
+ - Class11 [Structural Bioinformatics pt. I](https://github.com/mattmaxwell1995/bggn213/blob/master/class11/class11.md)
  - Class12 [Structural Bioinformatics pt. II](https://github.com/mattmaxwell1995/bggn213/blob/master/class12/class12.md)
  - Class13 [Genomics](https://github.com/mattmaxwell1995/bggn213/blob/master/class13/class13.md)
  - Class14 [RNA Seq Analysis](https://github.com/mattmaxwell1995/bggn213/blob/master/class14/class14.md)
