@@ -2,7 +2,7 @@
 title: 'Class 15: Pathway Analysis and Interpretation of Gene Lists'
 author: "Matt Maxwell"
 date: "March 1, 2019"
-output: html_document
+output: github_document
 ---
 
 Today we'll read in our RNA seq files for a transcription factor siRNA knockdown experiment. We'll do differential expression analysis then pathway analysis.
